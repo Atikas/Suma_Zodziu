@@ -2,15 +2,20 @@
     ''' <summary>
     ''' skaitmeninio tipo kintamojo keitimas į sumą žodžiu
     ''' </summary>
-    ''' <param name="Number"></param>
     ''' <returns>gražina sumą žodžiu String, didžiausiai suma baigiasi žodžiu 'tūkstančiai'</returns>
-    Public Function GET_SumaZodziu(ByVal Number As Double) As String
+    Public Function GET_SumaZodziu(ByVal Num As Double) As String
         Dim SumaZodziu As String = String.Empty
         Dim Dollars As String = String.Empty
         Dim Cents As String = String.Empty
         Dim Valiuta As String = String.Empty
         Dim DecimalPlace, Count As Integer
+        Dim Number As String = String.Empty
 
+        If Num < 0 Then
+            Return "-"
+        Else
+            Number = Num.ToString("#.00")
+        End If
 
         DecimalPlace = InStr(Number, ",")
         If DecimalPlace > 0 Then
@@ -22,26 +27,27 @@
         End If
 
         Count = Len(Number)
-        If Count > 3 Then
-            Dollars = Dollars & GET_Thousand(Right(Number, 6))
-        End If
-        If Count > 2 Then
-            Dollars = Dollars & GET_Hundreds(Right(Number, 3))
-        End If
-        If Count > 1 Then
-            Dollars = Dollars & GET_Tens(Right(Number, 2))
-            Valiuta = GET_Valiuta(Right(Number, 2))
+        If Number = "" Then
+            Dollars = "Nulis eurų "
         Else
-            If Number > 0 Then
-                Dollars = Dollars & GET_Digit(Right(Number, 1))
-                Valiuta = GET_Valiuta(Right(Number, 1))
-            Else
-                Dollars = "Nulis eurų "
-            End If
+            Select Case Count
+                Case > 3
+                    Dollars = Dollars & GET_Thousand(Right(Number, 6))
+                Case > 2
+                    Dollars = Dollars & GET_Hundreds(Right(Number, 3))
+                Case > 1
+                    Dollars = Dollars & GET_Tens(Right(Number, 2))
+                    Valiuta = GET_Valiuta(Right(Number, 2))
+                Case = 1
+                    Dollars = Dollars & GET_Digit(Right(Number, 1))
+                    Valiuta = GET_Valiuta(Right(Number, 1))
+                Case Else
+                    Dollars = "N/G"
+            End Select
         End If
-        If Count = 1 Then
-            Dollars = "Nulis "
-        End If
+        'If Count = 1 Then
+        '    Dollars = "Nulis "
+        'End If
         SumaZodziu = UCase(Left(Dollars, 1))
         Dollars = Right(Dollars, Len(Dollars) - 1)
 
@@ -50,7 +56,7 @@
         Return SumaZodziu
     End Function
 
-    Function GET_Valiuta(ByVal Skaic_text)
+    Private Function GET_Valiuta(ByVal Skaic_text)
         If Len(Skaic_text) > 1 Then
             If Left(Skaic_text, 1) = "1" Then
                 GET_Valiuta = "eurų "
@@ -65,7 +71,8 @@
             Case Else : GET_Valiuta = "eurai "
         End Select
     End Function
-    Function GET_Digit(Skaic_text)
+
+    Private Function GET_Digit(Skaic_text)
 
         Select Case Skaic_text
             Case "1" : GET_Digit = "vienas "
@@ -81,7 +88,8 @@
         End Select
 
     End Function
-    Function GET_Tens(TensText)
+
+    Private Function GET_Tens(TensText)
         Dim Result As String
         Result = ""           ' Valome rezultatą
         If Val(Left(TensText, 1)) = 1 Then   'Jei tarp 10-19...
@@ -115,7 +123,7 @@
         GET_Tens = Result
     End Function
 
-    Function GET_Hundreds(ByVal Number)
+    Private Function GET_Hundreds(ByVal Number)
         Number = Left(Number, 1)
         Select Case Number
             Case "0" : GET_Hundreds = ""
@@ -123,7 +131,8 @@
             Case Else : GET_Hundreds = GET_Digit(Number) & "šimtai "
         End Select
     End Function
-    Function GET_Thousand(ByVal Number)
+
+    Private Function GET_Thousand(ByVal Number)
         Dim Tukst As String
         Tukst = Left(Number, Len(Number) - 3)
         If Len(Tukst) > 2 Then GET_Thousand = GET_Hundreds(Tukst)
