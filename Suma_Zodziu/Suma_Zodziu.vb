@@ -5,20 +5,13 @@
     ''' <param name="Number"></param>
     ''' <returns>gražina sumą žodžiu String, didžiausiai suma baigiasi žodžiu 'tūkstančiai'</returns>
     Public Function GET_SumaZodziu(ByVal Number As Double) As String
-        Dim SumaZodziu As String
-        Dim Dollars As String = ""
-        Dim Cents As String = ""
-        Dim Valiuta As String = ""
-        Dim DecimalPlace, Count
-        Dim Place_2 As String = " tūkstantis "
-        Dim Place_3 As String = " milijonas "
+        Dim SumaZodziu As String = String.Empty
+        Dim Dollars As String = String.Empty
+        Dim Cents As String = String.Empty
+        Dim Valiuta As String = String.Empty
+        Dim DecimalPlace, Count As Integer
 
-        'Dim NumberSveikas As String
-        'NumberSveikas = Trim(Str(Number))
 
-        'Dim Sk_Ilgis As Integer
-        'Sk_Ilgis = Len(Number)
-        'Number = Trim(Str(Number))
         DecimalPlace = InStr(Number, ",")
         If DecimalPlace > 0 Then
             Cents = Left(Mid(Number, DecimalPlace + 1) &
@@ -46,12 +39,12 @@
                 Dollars = "Nulis eurų "
             End If
         End If
-        'If Count = 1 Then
-        '    Dollars = "Nulis "
-        'End If
+        If Count = 1 Then
+            Dollars = "Nulis "
+        End If
         SumaZodziu = UCase(Left(Dollars, 1))
         Dollars = Right(Dollars, Len(Dollars) - 1)
-        'SumaZodziu = "[" & Number & "] " & SumaZodziu & Dollars & Valiuta & Cents '& " ct."
+
         SumaZodziu = SumaZodziu & Dollars & Valiuta & Cents '& " ct."
 
         Return SumaZodziu
@@ -90,8 +83,8 @@
     End Function
     Function GET_Tens(TensText)
         Dim Result As String
-        Result = ""           ' Null out the temporary function value.
-        If Val(Left(TensText, 1)) = 1 Then   ' If value between 10-19...
+        Result = ""           ' Valome rezultatą
+        If Val(Left(TensText, 1)) = 1 Then   'Jei tarp 10-19...
             Select Case Val(TensText)
                 Case "10" : Result = "dešimt "
                 Case "11" : Result = "venuolika "
@@ -105,7 +98,7 @@
                 Case "19" : Result = "devyniolika "
                 Case Else
             End Select
-        Else                                 ' If value between 20-99...
+        Else  ' jei tarp 20-99...
             Select Case Val(Left(TensText, 1))
                 Case 2 : Result = "dvidešimt "
                 Case 3 : Result = "trisdešimt "
@@ -117,8 +110,7 @@
                 Case 9 : Result = "devyniasdešimt "
                 Case Else
             End Select
-            Result = Result & GET_Digit _
-            (Right(TensText, 1))  ' Retrieve ones place.
+            Result = Result & GET_Digit(Right(TensText, 1))  ' vienetų vieta
         End If
         GET_Tens = Result
     End Function
